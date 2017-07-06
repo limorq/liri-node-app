@@ -1,0 +1,203 @@
+
+//setup switch statement that slects the correct command
+var command = process.argv[2];
+var parameter = process.argv[3];
+var fs = require("fs");
+
+//invoke the execute command function
+execute(command, parameter);
+
+function execute (arg,para) {
+
+	switch (arg) {
+		case "my-tweets":
+
+			//add command info to a log file
+			fs.appendFile('log.txt', arg + " " + para + ",", function(err) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					console.log("command added to log.txt");
+				}
+			});
+
+			//invoke function to show tweets in terminal
+			showTweets();
+			break;
+
+		case "spotify-this-song":
+
+			//add command info to a log file
+			fs.appendFile('log.txt', arg + " " + para + ",", function(err) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					console.log("command added to log.txt");
+				}
+			});
+
+			//invoke function to show song info in terminal
+			showSong(para);
+			break;
+
+		case "movie-this":
+
+			//add command info to a log file
+			fs.appendFile('log.txt', arg + " " + para + ",", function(err) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					console.log("command added to log.txt");
+				}
+			});
+
+			//invoke function to show movie info in terminal
+			showMovie(para);
+			break;
+
+		case "do-what-it-says":
+
+			//add command info to a log file
+			fs.appendFile('log.txt', arg + " " + para + ",", function(err) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					console.log("command added to log.txt");
+				}
+			});
+
+			showWhatever();
+			break;
+
+		default:
+			console.log("The command you entered is incorrect, try again with these commands only: 'my-tweets', 'spotify-this-song', 'movie-this', or 'do-what-it-says'");
+			break;
+	}
+}
+
+function showTweets () {
+	//obtain keys and the twitter module
+	var keys = require("./keys.js");
+	var twitter = require('twitter');
+	var ck = keys.twitterKeys.consumer_key;
+	var cs = keys.twitterKeys.consumer_secret;
+	var atk = keys.twitterKeys.access_token_key;
+	var ats = keys.twitterKeys.access_token_secret;
+
+	//aunthenticate twitter
+	var query = new twitter({
+	  consumer_key: ck,
+	  consumer_secret: cs,
+	  access_token_key: atk,
+	  access_token_secret: ats
+	});
+
+	//get last20 tweets
+	query.get('search/tweets', {q: 'node.js'}, 
+		function(error, tweets, response) {
+   			console.log(tweets);
+		});
+}
+
+function showSong(songName) {
+	var Spot = require('node-spotify-api');
+
+	//insert default song is none is provided by user
+	if (songName === undefined) {
+		songName = "the sign";
+	}
+
+	var wordsInSong = songName.split(" ");
+	songName = wordsInSong[0];
+
+	//loop thru each word in the song name
+	for (var i = 1; i<wordsInSong.length; i++) {
+		if (wordsInSong.length != 1) {
+			songName = songName + "+" + wordsInSong[i];
+		}
+	}
+console.log(songName);
+	var spotify = new Spot ({
+  		id: "d229fb124cad4179b69413a95cb2064c",
+  		secret: "3e37cb2edc5c472386e2a718f5cf466d"
+		});
+ 
+	spotify.search({ type: 'track', query: songName, limit: 1}, function(err, data) {
+  		if (err) {
+    		return console.log('Error occurred: ' + err);
+  		}
+ 		else {
+			console.log(data.items);		}
+	});
+}
+
+function showMovie(para) {
+	var request = require("request");
+	var movieName = "";
+
+	//set movie name to Mr Nobody if none is provided by user
+	if (para === undefined) {
+		para = "mr. nobody";
+	}
+
+	//remove periods from movie titles
+	para.replace(/\./g, "");
+	console.log(para);
+
+	//split words from movie title and create an array of words
+	var wordsInMovie = para.split(" ");
+	
+
+	//loop thru each word in the movie name
+	for (var i=0; i<wordsInMovie.length; i++) {
+		 if (wordsInMovie.length != 1) {
+		    movieName = movieName + "+" + wordsInMovie[i];
+		  }
+		  else {
+		    movieName = para;
+		  }
+	}
+
+	//request info on movie name from omdb
+	var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=40e9cece";
+
+
+	request(queryUrl, function(error, response, body) {
+
+	  // If the request is successful
+	  if (!error && response.statusCode === 200) {
+
+	    // Print movie info
+	    console.log("Movie title: " + JSON.parse(body).Title);
+	    console.log("Release Year: " + JSON.parse(body).Year);
+	    console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
+	    console.log("Country: " + JSON.parse(body).Country);
+	    console.log("Language: " + JSON.parse(body).Language);
+	    console.log("Plot: " + JSON.parse(body).Plot);
+	    console.log("Actors: " + JSON.parse(body).Actors);
+	  }
+	});
+}
+
+function showWhatever() {
+
+	//get text from file
+	fs.readFile('random.txt', 'utf8', function(err, data) {
+				
+	  			if (err) {
+	  				console.log(err);
+	  			}
+	  			else {
+					var dataArr = data.split(",");
+					var comm = dataArr[0];
+					var thingName = dataArr[1].replace(/"/g,"");
+				}	
+				execute(comm, thingName);		
+			});
+	
+}
+
