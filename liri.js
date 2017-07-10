@@ -33,9 +33,6 @@ function execute (arg,para) {
 				if (err) {
 					console.log(err);
 				}
-				else {
-					console.log("command added to log.txt");
-				}
 			});
 
 			//invoke function to show song info in terminal
@@ -49,9 +46,6 @@ function execute (arg,para) {
 				if (err) {
 					console.log(err);
 				}
-				else {
-					console.log("command added to log.txt");
-				}
 			});
 
 			//invoke function to show movie info in terminal
@@ -64,9 +58,6 @@ function execute (arg,para) {
 			fs.appendFile('log.txt', arg + " " + para + ",", function(err) {
 				if (err) {
 					console.log(err);
-				}
-				else {
-					console.log("command added to log.txt");
 				}
 			});
 
@@ -99,7 +90,9 @@ function showTweets () {
 	//get last20 tweets
 	query.get('search/tweets', {q: 'node.js'}, 
 		function(error, tweets, response) {
-   			console.log(tweets);
+			for (var i=1; i<11; i++) {
+   				console.log("Tweet #" + i + ":" + tweets.statuses[i].text);
+   			}
 		});
 }
 
@@ -120,7 +113,7 @@ function showSong(songName) {
 			songName = songName + "+" + wordsInSong[i];
 		}
 	}
-console.log(songName);
+
 	var spotify = new Spot ({
   		id: "d229fb124cad4179b69413a95cb2064c",
   		secret: "3e37cb2edc5c472386e2a718f5cf466d"
@@ -131,7 +124,11 @@ console.log(songName);
     		return console.log('Error occurred: ' + err);
   		}
  		else {
-			console.log(data.items);		}
+			console.log("Song Name: " + data.tracks.items[0].name);	
+			console.log("Artist: " + data.tracks.items[0].album.artists[0].name);
+			console.log("Preview link of this song: " + data.tracks.items[0].preview_url);
+			console.log("Album: " + data.tracks.items[0].album.name);
+		}
 	});
 }
 
