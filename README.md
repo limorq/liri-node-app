@@ -21,4 +21,4 @@ A command line node application that returns tweets, song, and movie information
     
   4. do-whatevet-it-says - can be used to accept a command from a file called random.txt
   
-All commands are stored in a separate log file to keep track of history.
+All commands are applied at the command line and stored in a separate log file to keep track of history. This application was designed to show my knowledge of working with multiple API's for information retrieval and extraction which is ready for UI implementation, however no front end has been developed for this project as of yet.
